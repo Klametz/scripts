@@ -23,15 +23,15 @@ ffi.cdef[[
 	void keybd_event(int keycode, int scancode, int flags, int extra);
 ]]
 local keys = require "vkeys"
-local script_vers = 1
-local script_vers_text = "1.00"
+local script_vers = 2
+local script_vers_text = "1.1"
 local update_url = "https://raw.githubusercontent.com/Klametz/scripts/master/update.ini"
 local update_path = getWorkingDirectory() .. "/update.ini"
-local script_url = ""
+local script_url = "https://github.com/Klametz/scripts/raw/master/Fluder.lua"
 local script_path = thisScript().path
 local main_color = 0x5A90CE
 local main_color_text = "{FFFF00}"
-local tag = "[Флудер]: "
+local tag = "[Р¤Р»СѓРґРµСЂ]: "
 local main_window_state = imgui.ImBool(false)
 local text_buffer = imgui.ImBuffer(256)
 local text_buffer_2 = imgui.ImBuffer(256)
@@ -48,7 +48,7 @@ function main()
 	sampRegisterChatCommand("fludall", fludall)
 	sampRegisterChatCommand("flud1", flud1)
 	sampRegisterChatCommand("flud2", flud2)
-	sampAddChatMessage(tag .. main_color_text .. "Скрипт готов к работе. Автор - " .. "{FFFFFF}" ..  "СоМиК" .. main_color_text .. "! Подробнее: клавиша " .. "{FFFFFF}" .. "HOME", main_color)
+	sampAddChatMessage(tag .. main_color_text .. "РЎРєСЂРёРїС‚ РіРѕС‚РѕРІ Рє СЂР°Р±РѕС‚Рµ Р­С‚Рѕ РѕР±РЅРѕРІР° РєСЃС‚Р°. РђРІС‚РѕСЂ - " .. "{FFFFFF}" ..  "РЎРѕРњРёРљ" .. main_color_text .. "! РџРѕРґСЂРѕР±РЅРµРµ: РєР»Р°РІРёС€Р° " .. "{FFFFFF}" .. "HOME", main_color)
 	active1 = false
 	active2 = false
 	imgui.Process = false
@@ -72,13 +72,23 @@ function main()
 		if status == dlstatus.STATUS_ENDDOWNLOADDATA then
 			updateIni = inicfg.load(nil, update_path)
 			if tonumber(updateIni.info.vers) > script_vers then
-				sampAddChatMessage(tag .. main_color_text .. "Появилось обновление! Версия: " .. updateIni.info.vers_text, main_color)
+				sampAddChatMessage(tag .. main_color_text .. "РђРІС‚РѕСЂ СЃРєСЂРёРїС‚Р° РІС‹РїСѓСЃС‚РёР» РѕР±РЅРѕРІР»РµРЅРёРµ! Р’РµСЂСЃРёСЏ: " .. "{FFFFFF}"updateIni.info.vers_text, main_color)
 				update_state = true
 			end
+			os.remove(update_path)
 		end
 	end)
 	while true do
 	wait(0)
+		if update_state then
+			downloadUrlToFile(script_url, script_path, function(id, status)
+				if status == dlstatus.STATUS_ENDDOWNLOADDATA then
+					sampAddChatMessage(tag .. main_color_text .. "РЎРєСЂРёРїС‚ СѓСЃРїРµС€РЅРѕ {FFFFFF}РѕР±РЅРѕРІР»РµРЅ{FFFF00}!", main_color)
+					thisScript():reload()
+				end
+			end)
+			break
+		end
 		if active1 == true and not isPauseMenuActive() and not isSampfuncsConsoleActive() then
 			sampSendChat(tables.tabl.flud1)
 			wait(tables.tabl.smstime1)
@@ -89,11 +99,11 @@ function main()
 		end
 		if isKeyJustPressed(VK_HOME) and not sampIsChatInputActive() and not isPauseMenuActive() then
 		sampAddChatMessage(tag .. "{FFFFFF}-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------", main_color)
-		sampAddChatMessage(tag .. main_color_text .. "Автор скрипта - " .. "{FFFFFF}" .. "https://vk.com/klamet1/" .. main_color_text .. ", группа со скриптами - " .. "{FFFFFF}" .. "https://vk.com/sctiptsofsomik/", main_color)
-		sampAddChatMessage(tag .. main_color_text .. "Запустить основное окно скрипта - {FFFFFF}/fluder", main_color)
-		sampAddChatMessage(tag .. main_color_text .. "Запустить/остановить флуд 1-ого/2-ого сообщения - {FFFFFF}/flud1{FFFF00} | {FFFFFF}/flud2", main_color)
-		sampAddChatMessage(tag .. main_color_text .. "Запустить все сообщения для флуда - команда {FFFFFF}/fludall", main_color)
-		sampAddChatMessage(tag .. main_color_text .. "Остановить весь флуд - команда {FFFFFF}/stopflud", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "РђРІС‚РѕСЂ СЃРєСЂРёРїС‚Р° - " .. "{FFFFFF}" .. "https://vk.com/klamet1/" .. main_color_text .. ", РіСЂСѓРїРїР° СЃРѕ СЃРєСЂРёРїС‚Р°РјРё - " .. "{FFFFFF}" .. "https://vk.com/sctiptsofsomik/", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "Р—Р°РїСѓСЃС‚РёС‚СЊ РѕСЃРЅРѕРІРЅРѕРµ РѕРєРЅРѕ СЃРєСЂРёРїС‚Р° - {FFFFFF}/fluder", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "Р—Р°РїСѓСЃС‚РёС‚СЊ/РѕСЃС‚Р°РЅРѕРІРёС‚СЊ С„Р»СѓРґ 1-РѕРіРѕ/2-РѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ - {FFFFFF}/flud1{FFFF00} | {FFFFFF}/flud2", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "Р—Р°РїСѓСЃС‚РёС‚СЊ РІСЃРµ СЃРѕРѕР±С‰РµРЅРёСЏ РґР»СЏ С„Р»СѓРґР° - РєРѕРјР°РЅРґР° {FFFFFF}/fludall", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "РћСЃС‚Р°РЅРѕРІРёС‚СЊ РІРµСЃСЊ С„Р»СѓРґ - РєРѕРјР°РЅРґР° {FFFFFF}/stopflud", main_color)
 		sampAddChatMessage(tag .. "{FFFFFF}-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------", main_color)
 		end
 	end
@@ -103,31 +113,31 @@ function fluder()
 	imgui.Process = main_window_state.v
 end
 function fludall()
-	sampAddChatMessage(tag .. main_color_text .. "Все сообщения для флуда были {FFFFFF}запущены{FFFF00}!", main_color)
+	sampAddChatMessage(tag .. main_color_text .. "Р’СЃРµ СЃРѕРѕР±С‰РµРЅРёСЏ РґР»СЏ С„Р»СѓРґР° Р±С‹Р»Рё {FFFFFF}Р·Р°РїСѓС‰РµРЅС‹{FFFF00}!", main_color)
 	active1 = true
 	active2 = true
 end
 function stopflud()
 	active1 = false
 	active2 = false
-	sampAddChatMessage(tag .. main_color_text .. "Все запущенные сообщения для флуда были {FFFFFF}остановлены{FFFF00}!", main_color)
+	sampAddChatMessage(tag .. main_color_text .. "Р’СЃРµ Р·Р°РїСѓС‰РµРЅРЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ РґР»СЏ С„Р»СѓРґР° Р±С‹Р»Рё {FFFFFF}РѕСЃС‚Р°РЅРѕРІР»РµРЅС‹{FFFF00}!", main_color)
 end
 function flud1()
 	if active1 == true then
 		active1 = false
-		sampAddChatMessage(tag .. main_color_text .. "Флуд первого сообщениясообщения {FFFFFF}остановлен{FFFF00}!", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "Р¤Р»СѓРґ РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏСЃРѕРѕР±С‰РµРЅРёСЏ {FFFFFF}РѕСЃС‚Р°РЅРѕРІР»РµРЅ{FFFF00}!", main_color)
 	else
 		active1 = true
-		sampAddChatMessage(tag .. main_color_text .. "Флуд первого сообщениясообщения {FFFFFF}запущен{FFFF00}!", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "Р¤Р»СѓРґ РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏСЃРѕРѕР±С‰РµРЅРёСЏ {FFFFFF}Р·Р°РїСѓС‰РµРЅ{FFFF00}!", main_color)
 	end
 end
 function flud2()
 	if active2 == true then
 		active2 = false
-		sampAddChatMessage(tag .. main_color_text .. "Флуд второго сообщения {FFFFFF}остановлен{FFFF00}!", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "Р¤Р»СѓРґ РІС‚РѕСЂРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ {FFFFFF}РѕСЃС‚Р°РЅРѕРІР»РµРЅ{FFFF00}!", main_color)
 	else
 		active2 = true
-		sampAddChatMessage(tag .. main_color_text .. "Флуд второго сообщения {FFFFFF}запущен{FFFF00}!", main_color)
+		sampAddChatMessage(tag .. main_color_text .. "Р¤Р»СѓРґ РІС‚РѕСЂРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ {FFFFFF}Р·Р°РїСѓС‰РµРЅ{FFFF00}!", main_color)
 	end
 end
 function imgui.OnDrawFrame()
@@ -137,10 +147,10 @@ function imgui.OnDrawFrame()
 	if main_window_state.v then
 		imgui.SetNextWindowSize(imgui.ImVec2(575, 400), imgui.Cond.FirstUseEver)
 		imgui.SetNextWindowPos(imgui.ImVec2((sw / 2), sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-		imgui.Begin(u8"Флудер", main_window_state)
-		imgui.Text(u8"Выбор темы:")
+		imgui.Begin(u8"Р¤Р»СѓРґРµСЂ", main_window_state)
+		imgui.Text(u8"Р’С‹Р±РѕСЂ С‚РµРјС‹:")
 		imgui.SameLine()
-		if imgui.Combo(u8'', selected_item, {u8"Стандартная тема", u8"Красная", u8"Коричневая", u8"Аква", u8"Чёрная", u8"Фиолетовая", u8"Черно-оранжевая"}, 7) then
+		if imgui.Combo(u8'', selected_item, {u8"РЎС‚Р°РЅРґР°СЂС‚РЅР°СЏ С‚РµРјР°", u8"РљСЂР°СЃРЅР°СЏ", u8"РљРѕСЂРёС‡РЅРµРІР°СЏ", u8"РђРєРІР°", u8"Р§С‘СЂРЅР°СЏ", u8"Р¤РёРѕР»РµС‚РѕРІР°СЏ", u8"Р§РµСЂРЅРѕ-РѕСЂР°РЅР¶РµРІР°СЏ"}, 7) then
 			if selected_item.v == 0 then
 				themes.SwitchColorTheme(1)
 				theme = 1
@@ -171,46 +181,46 @@ function imgui.OnDrawFrame()
 			end
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"сохранить тему") then
+		if imgui.Button(u8"СЃРѕС…СЂР°РЅРёС‚СЊ С‚РµРјСѓ") then
 			tables.tabl.theme = theme
 			inicfg.save(tables, "fluder")
-			sampAddChatMessage(tag .. main_color_text .. "Тема успешно {FFFFFF}сохранена{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "РўРµРјР° СѓСЃРїРµС€РЅРѕ {FFFFFF}СЃРѕС…СЂР°РЅРµРЅР°{FFFF00}!", main_color)
 		end
 		imgui.Separator()
-		if imgui.InputText(u8"первое сообщение", text_buffer) then
+		if imgui.InputText(u8"РїРµСЂРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ", text_buffer) then
 			flud1 = text_buffer.v
 		end
-		imgui.Text(u8"Ваше сообщение: " .. text_buffer.v)
-		if imgui.Button(u8"последнее сохраненное сообщение №1") then
+		imgui.Text(u8"Р’Р°С€Рµ СЃРѕРѕР±С‰РµРЅРёРµ: " .. text_buffer.v)
+		if imgui.Button(u8"РїРѕСЃР»РµРґРЅРµРµ СЃРѕС…СЂР°РЅРµРЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ в„–1") then
 			if tables.tabl.flud1 == nil then
-				sampAddChatMessage(tag .. main_color_text .. "Вы не указали первое {FFFFFF}сообщение{FFFF00}!", main_color)
+				sampAddChatMessage(tag .. main_color_text .. "Р’С‹ РЅРµ СѓРєР°Р·Р°Р»Рё РїРµСЂРІРѕРµ {FFFFFF}СЃРѕРѕР±С‰РµРЅРёРµ{FFFF00}!", main_color)
 			else
-				sampAddChatMessage(tag .. main_color_text .. "В чат выведено последнее сохраненное {FFFFFF}сообщение{FFFF00}:", main_color)
+				sampAddChatMessage(tag .. main_color_text .. "Р’ С‡Р°С‚ РІС‹РІРµРґРµРЅРѕ РїРѕСЃР»РµРґРЅРµРµ СЃРѕС…СЂР°РЅРµРЅРЅРѕРµ {FFFFFF}СЃРѕРѕР±С‰РµРЅРёРµ{FFFF00}:", main_color)
 				sampAddChatMessage(tag .. "{FFFFFF}" .. u8:decode(tables.tabl.flud1), main_color)
 			end
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"сохранить сообщение №1") then
+		if imgui.Button(u8"СЃРѕС…СЂР°РЅРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ в„–1") then
 			tables.tabl.flud1 = flud1
 			inicfg.save(tables, "fluder")
-			sampAddChatMessage(tag .. main_color_text .. "Сообщение №1 успешно {FFFFFF}сохранено{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "РЎРѕРѕР±С‰РµРЅРёРµ в„–1 СѓСЃРїРµС€РЅРѕ {FFFFFF}СЃРѕС…СЂР°РЅРµРЅРѕ{FFFF00}!", main_color)
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"удалить сообщение №1") then
+		if imgui.Button(u8"СѓРґР°Р»РёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ в„–1") then
 			tables.tabl.flud1 = nil
 			inicfg.save(tables, "fluder")
-			sampAddChatMessage(tag .. main_color_text .. "Сообщение №1 успешно {FFFFFF}удалено{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "РЎРѕРѕР±С‰РµРЅРёРµ в„–1 СѓСЃРїРµС€РЅРѕ {FFFFFF}СѓРґР°Р»РµРЅРѕ{FFFF00}!", main_color)
 		end
-		if imgui.Button(u8"запустить флуд сообщения №1") then
+		if imgui.Button(u8"Р·Р°РїСѓСЃС‚РёС‚СЊ С„Р»СѓРґ СЃРѕРѕР±С‰РµРЅРёСЏ в„–1") then
 			active1 = true
-			sampAddChatMessage(tag .. main_color_text .. "Флуд первого сообщения {FFFFFF}запущен{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "Р¤Р»СѓРґ РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ {FFFFFF}Р·Р°РїСѓС‰РµРЅ{FFFF00}!", main_color)
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"остановить флуд сообщения №1") then
+		if imgui.Button(u8"РѕСЃС‚Р°РЅРѕРІРёС‚СЊ С„Р»СѓРґ СЃРѕРѕР±С‰РµРЅРёСЏ в„–1") then
 			active1 = false
-			sampAddChatMessage(tag .. main_color_text .. "Флуд первого сообщения {FFFFFF}остановлен{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "Р¤Р»СѓРґ РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ {FFFFFF}РѕСЃС‚Р°РЅРѕРІР»РµРЅ{FFFF00}!", main_color)
 		end
-		if imgui.SliderFloat(u8"задержка первого сообщения", slider, 1, 20, '%.0f') then
+		if imgui.SliderFloat(u8"Р·Р°РґРµСЂР¶РєР° РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ", slider, 1, 20, '%.0f') then
 			if slider.v == 1 then
 				smstime1 = 1000
 			end
@@ -272,50 +282,50 @@ function imgui.OnDrawFrame()
 				smstime1 = 20000
 			end
 		end
-		if imgui.Button(u8"последняя сохраненная задержка 1-ого сообщения") then
-			sampAddChatMessage(tag .. main_color_text .. "Текущая задержка сообщений первого текста: {FFFFFF}" .. tables.tabl.smstime1 / 1000 .. " {FFFF00}секунд(а/ы)", main_color)
+		if imgui.Button(u8"РїРѕСЃР»РµРґРЅСЏСЏ СЃРѕС…СЂР°РЅРµРЅРЅР°СЏ Р·Р°РґРµСЂР¶РєР° 1-РѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ") then
+			sampAddChatMessage(tag .. main_color_text .. "РўРµРєСѓС‰Р°СЏ Р·Р°РґРµСЂР¶РєР° СЃРѕРѕР±С‰РµРЅРёР№ РїРµСЂРІРѕРіРѕ С‚РµРєСЃС‚Р°: {FFFFFF}" .. tables.tabl.smstime1 / 1000 .. " {FFFF00}СЃРµРєСѓРЅРґ(Р°/С‹)", main_color)
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"сохранить задержку сообщению №1") then
+		if imgui.Button(u8"СЃРѕС…СЂР°РЅРёС‚СЊ Р·Р°РґРµСЂР¶РєСѓ СЃРѕРѕР±С‰РµРЅРёСЋ в„–1") then
 			tables.tabl.smstime1 = smstime1
 			inicfg.save(tables, "fluder")
-			sampAddChatMessage(tag .. main_color_text .. "Новая задержка успешно {FFFFFF}сохранена{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "РќРѕРІР°СЏ Р·Р°РґРµСЂР¶РєР° СѓСЃРїРµС€РЅРѕ {FFFFFF}СЃРѕС…СЂР°РЅРµРЅР°{FFFF00}!", main_color)
 		end
 		imgui.Separator()
-		if imgui.InputText(u8"второе сообщение", text_buffer_2) then
+		if imgui.InputText(u8"РІС‚РѕСЂРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ", text_buffer_2) then
 			flud2 = text_buffer_2.v
 		end
-		imgui.Text(u8"Ваше сообщение: " .. text_buffer_2.v)
-		if imgui.Button(u8"последнее сохраненное сообщение №2") then
+		imgui.Text(u8"Р’Р°С€Рµ СЃРѕРѕР±С‰РµРЅРёРµ: " .. text_buffer_2.v)
+		if imgui.Button(u8"РїРѕСЃР»РµРґРЅРµРµ СЃРѕС…СЂР°РЅРµРЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ в„–2") then
 			if tables.tabl.flud2 == nil then
-				sampAddChatMessage(tag .. main_color_text .. "Вы не указали второе {FFFFFF}сообщение{FFFF00}!", main_color)
+				sampAddChatMessage(tag .. main_color_text .. "Р’С‹ РЅРµ СѓРєР°Р·Р°Р»Рё РІС‚РѕСЂРѕРµ {FFFFFF}СЃРѕРѕР±С‰РµРЅРёРµ{FFFF00}!", main_color)
 			else
-				sampAddChatMessage(tag .. main_color_text .. "В чат выведено последнее сохраненное {FFFFFF}сообщение{FFFF00}:", main_color)
+				sampAddChatMessage(tag .. main_color_text .. "Р’ С‡Р°С‚ РІС‹РІРµРґРµРЅРѕ РїРѕСЃР»РµРґРЅРµРµ СЃРѕС…СЂР°РЅРµРЅРЅРѕРµ {FFFFFF}СЃРѕРѕР±С‰РµРЅРёРµ{FFFF00}:", main_color)
 				sampAddChatMessage(tag .. "{FFFFFF}" .. u8:decode(tables.tabl.flud2), main_color)
 			end
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"сохранить сообщение №2") then
+		if imgui.Button(u8"СЃРѕС…СЂР°РЅРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ в„–2") then
 			tables.tabl.flud2 = flud2
 			inicfg.save(tables, "fluder")
-			sampAddChatMessage(tag .. main_color_text .. "Сообщение №2 успешно {FFFFFF}сохранено{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "РЎРѕРѕР±С‰РµРЅРёРµ в„–2 СѓСЃРїРµС€РЅРѕ {FFFFFF}СЃРѕС…СЂР°РЅРµРЅРѕ{FFFF00}!", main_color)
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"удалить сообщение №2") then
+		if imgui.Button(u8"СѓРґР°Р»РёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ в„–2") then
 			tables.tabl.flud2 = nil
 			inicfg.save(tables, "fluder")
-			sampAddChatMessage(tag .. main_color_text .. "Сообщение №2 успешно {FFFFFF}удалено{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "РЎРѕРѕР±С‰РµРЅРёРµ в„–2 СѓСЃРїРµС€РЅРѕ {FFFFFF}СѓРґР°Р»РµРЅРѕ{FFFF00}!", main_color)
 		end
-		if imgui.Button(u8"запустить флуд сообщения №2") then
+		if imgui.Button(u8"Р·Р°РїСѓСЃС‚РёС‚СЊ С„Р»СѓРґ СЃРѕРѕР±С‰РµРЅРёСЏ в„–2") then
 			active2 = true
-			sampAddChatMessage(tag .. main_color_text .. "Флуд второго сообщения {FFFFFF}запущен{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "Р¤Р»СѓРґ РІС‚РѕСЂРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ {FFFFFF}Р·Р°РїСѓС‰РµРЅ{FFFF00}!", main_color)
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"остановить флуд сообщения №2") then
+		if imgui.Button(u8"РѕСЃС‚Р°РЅРѕРІРёС‚СЊ С„Р»СѓРґ СЃРѕРѕР±С‰РµРЅРёСЏ в„–2") then
 			active2 = false
-			sampAddChatMessage(tag .. main_color_text .. "Флуд второго сообщения {FFFFFF}остановлен{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "Р¤Р»СѓРґ РІС‚РѕСЂРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ {FFFFFF}РѕСЃС‚Р°РЅРѕРІР»РµРЅ{FFFF00}!", main_color)
 		end
-		if imgui.SliderFloat(u8"задержка второго сообщения", slider_2, 1, 20, '%.0f') then
+		if imgui.SliderFloat(u8"Р·Р°РґРµСЂР¶РєР° РІС‚РѕСЂРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ", slider_2, 1, 20, '%.0f') then
 			if slider_2.v == 1 then
 				smstime2 = 1000
 			end
@@ -377,29 +387,29 @@ function imgui.OnDrawFrame()
 				smstime2 = 20000
 			end
 		end
-		if imgui.Button(u8"последняя сохраненная задержка 2-ого сообщения") then
-			sampAddChatMessage(tag .. main_color_text .. "Текущая задержка сообщений второго текста: {FFFFFF}" .. tables.tabl.smstime2 / 1000 .. " {FFFF00}секунд(а/ы)", main_color)
+		if imgui.Button(u8"РїРѕСЃР»РµРґРЅСЏСЏ СЃРѕС…СЂР°РЅРµРЅРЅР°СЏ Р·Р°РґРµСЂР¶РєР° 2-РѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ") then
+			sampAddChatMessage(tag .. main_color_text .. "РўРµРєСѓС‰Р°СЏ Р·Р°РґРµСЂР¶РєР° СЃРѕРѕР±С‰РµРЅРёР№ РІС‚РѕСЂРѕРіРѕ С‚РµРєСЃС‚Р°: {FFFFFF}" .. tables.tabl.smstime2 / 1000 .. " {FFFF00}СЃРµРєСѓРЅРґ(Р°/С‹)", main_color)
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"сохранить задержку сообщению №2") then
+		if imgui.Button(u8"СЃРѕС…СЂР°РЅРёС‚СЊ Р·Р°РґРµСЂР¶РєСѓ СЃРѕРѕР±С‰РµРЅРёСЋ в„–2") then
 			tables.tabl.smstime2 = smstime2
 			inicfg.save(tables, "fluder")
-			sampAddChatMessage(tag .. main_color_text .. "Новая задержка успешно {FFFFFF}сохранена{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "РќРѕРІР°СЏ Р·Р°РґРµСЂР¶РєР° СѓСЃРїРµС€РЅРѕ {FFFFFF}СЃРѕС…СЂР°РЅРµРЅР°{FFFF00}!", main_color)
 		end
 		imgui.Separator()
-		if imgui.Button(u8"запустить флуд сразу двух сообщений") then
+		if imgui.Button(u8"Р·Р°РїСѓСЃС‚РёС‚СЊ С„Р»СѓРґ СЃСЂР°Р·Сѓ РґРІСѓС… СЃРѕРѕР±С‰РµРЅРёР№") then
 			active1 = true
 			active2 = true
-			sampAddChatMessage(tag .. main_color_text .. "Все сообщения для флуда были {FFFFFF}запущены{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "Р’СЃРµ СЃРѕРѕР±С‰РµРЅРёСЏ РґР»СЏ С„Р»СѓРґР° Р±С‹Р»Рё {FFFFFF}Р·Р°РїСѓС‰РµРЅС‹{FFFF00}!", main_color)
 		end
 		imgui.SameLine()
-		if imgui.Button(u8"остановить флуд сразу всех сообщений") then
+		if imgui.Button(u8"РѕСЃС‚Р°РЅРѕРІРёС‚СЊ С„Р»СѓРґ СЃСЂР°Р·Сѓ РІСЃРµС… СЃРѕРѕР±С‰РµРЅРёР№") then
 			active1 = false
 			active2 = false
-			sampAddChatMessage(tag .. main_color_text .. "Все запущенные сообщения для флуда были {FFFFFF}остановлены{FFFF00}!", main_color)
+			sampAddChatMessage(tag .. main_color_text .. "Р’СЃРµ Р·Р°РїСѓС‰РµРЅРЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ РґР»СЏ С„Р»СѓРґР° Р±С‹Р»Рё {FFFFFF}РѕСЃС‚Р°РЅРѕРІР»РµРЅС‹{FFFF00}!", main_color)
 		end
 		imgui.Separator()
-		imgui.Text(u8"Запуск флуда сразу всех сообщений может вызвать нестабильность!")
+		imgui.Text(u8"Р—Р°РїСѓСЃРє С„Р»СѓРґР° СЃСЂР°Р·Сѓ РІСЃРµС… СЃРѕРѕР±С‰РµРЅРёР№ РјРѕР¶РµС‚ РІС‹Р·РІР°С‚СЊ РЅРµСЃС‚Р°Р±РёР»СЊРЅРѕСЃС‚СЊ!")
 		imgui.End()
 	end
 end
