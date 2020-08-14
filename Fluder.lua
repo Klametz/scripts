@@ -23,8 +23,8 @@ ffi.cdef[[
 	void keybd_event(int keycode, int scancode, int flags, int extra);
 ]]
 local keys = require "vkeys"
-local script_vers = 2
-local script_vers_text = "1.1"
+local script_vers = 3
+local script_vers_text = "1.2"
 local update_url = "https://raw.githubusercontent.com/Klametz/scripts/master/update.ini"
 local update_path = getWorkingDirectory() .. "/update.ini"
 local script_url = "https://github.com/Klametz/scripts/raw/master/Fluder.lua"
@@ -87,7 +87,7 @@ function main()
 		if update_state then
 			downloadUrlToFile(script_url, script_path, function(id, status)
 				if status == dlstatus.STATUS_ENDDOWNLOADDATA then
-					sampAddChatMessage(tag .. main_color_text .. "Скрипт успешно {FFFFFF}обновлен{FFFF00}!", main_color)
+					sampAddChatMessage(tag .. main_color_text .. "Скрипт успешно {FFFFFF}обновлен{FFFF00}!{FFFF00} Узнать изменения можно введя команду {FFFFFF}/updateinfo", main_color)
 					thisScript():reload()
 				end
 			end)
@@ -108,15 +108,15 @@ function main()
 		end
 		if active2 == true and not isPauseMenuActive() and not isSampfuncsConsoleActive() then
 			if vr2 == false then
-				sampSendChat(tables.tabl.flud1)
-				wait(tables.tabl.smstime1)
+				sampSendChat(tables.tabl.flud2)
+				wait(tables.tabl.smstime2)
 			else
-				sampSendChat(tables.tabl.flud1)
+				sampSendChat("/vr " .. tables.tabl.flud2)
 				wait(500)
-				sampSendChat(tables.tabl.flud1)
+				sampSendChat("/vr " .. tables.tabl.flud2)
 				wait(500)
-				sampSendChat(tables.tabl.flud1)
-				wait(tables.tabl.smstime1 + 1000)
+				sampSendChat("/vr " .. tables.tabl.flud2)
+				wait(tables.tabl.smstime2 + 1000)
 			end
 		end
 		if isKeyJustPressed(VK_HOME) and not sampIsChatInputActive() and not isPauseMenuActive() then
@@ -164,7 +164,7 @@ function flud2()
 	end
 end
 function updateinfo()
-	sampShowDialog(1, '{FFFF00}История обновлений скрипта "Флудер"', "{00ff00}Версия 1.1:\n{FFFFFF}- оптимизирован код\n- добавлен новый режим флуда (для /vr)\n- добавлена кнопка в основном меню, которая открывает диалоговое окно с историей обновлений\n- добавлена команда /updateinfo\n{00ff00}Версия 1.0:\n{FFFFFF}- релиз", "Закрыть", "", 0)
+	sampShowDialog(1, '{FFFF00}История обновлений скрипта "Флудер"', "{00ff00}Версия 1.2:\n{FFFFFF}- пофикшены некоторые баги\n{00ff00}Версия 1.1:\n{FFFFFF}- оптимизирован код\n- добавлен новый режим флуда (для /vr)\n- добавлена кнопка в основном меню, которая открывает диалоговое окно с историей обновлений\n- добавлена команда /updateinfo\n{00ff00}Версия 1.0:\n{FFFFFF}- релиз", "Закрыть", "", 0)
 end
 function imgui.OnDrawFrame()
 	if not main_window_state.v then
